@@ -63,16 +63,16 @@ def load_data(city, month, day):
     Returns:
         df - Pandas DataFrame containing city data filtered by month and day
     """
-df = pd.read_csv(CITY_DATA[city])
-df['start time'] = pd.to_datetime(df['start time'])
-df['month'] = df['start time'].dt.month
-df['dayofweek'] = df['start time'].dt.weekday_name
-if month != 'all':
+    df = pd.read_csv(CITY_DATA[city])
+    df['start time'] = pd.to_datetime(df['start time'])
+    df['month'] = df['start time'].dt.month
+    df['dayofweek'] = df['start time'].dt.weekday_name
+    if month != 'all':
                months = ['january', 'february', 'march', 'april', 'may', 'june']
                month = months.index(month) + 1
                df = df[df['month'] == month]
-if day != 'all':
-    df = df[df['day_of_week'] == day.title()]
+    if day != 'all':
+                df = df[df['day_of_week'] == day.title()]
                                           
     return df
 
@@ -138,7 +138,7 @@ def trip_duration_stats(df):
     
     totaltime = 60*60*24
     totaltraveltime = df['trip duration'].mean()
-    print('mean travel time:', meantraveltime/meantime, "minutes")
+    print('mean travel time:', totaltraveltime / totaltime, "minutes")
     
 
     # TO DO: display mean travel time
@@ -161,28 +161,28 @@ def user_stats(df):
 
     # TO DO: Display counts of gender
     try:
-    gendertypes = df['gender'].value_counts()
-    print('\ngender types:\n', gendertypes)
+        gendertypes = df['gender'].value_counts()
+        print('\ngender types:\n', gendertypes)
     except KeyError:
-    print("\ngender types:\nsorry, there's no data for this month.")
+        print("\ngender types:\nsorry, there's no data for this month.")
             
 
     # TO DO: Display earliest, most recent, and most common year of birth
     try:
         earliestyear = df["birth year"].min()
-        print('\nearliest year:\n', earliesyear)
+        print('\nearliest year:\n', earliestyear)
     except KeyError:
-              print("\nearliest year:\nsorry, there's no data for this month.")
+        print("\nearliest year:\nsorry, there's no data for this month.")
     try:
-       mostrecentyear = df["birth year"].max()
-       print('\nmost recent year:', mostrecentyear)
+        mostrecentyear = df["birth year"].max()
+        print('\nmost recent year:', mostrecentyear)
     except KeyError:
-       print("\nmost recent year:\nsorry, ther's no data for this month.")
+        print("\nmost recent year:\nsorry, ther's no data for this month.")
     try:
-       mostcommonyear = df["birth year"].value_counts().idxmax()
-       print('\nmost common year:', mostcommonyear)
+        mostcommonyear = df["birth year"].value_counts().idxmax()
+        print('\nmost common year:', mostcommonyear)
     except KeyError:
-       print("\nmost common year:\nsorry, there's no data for this month.")
+        print("\nmost common year:\nsorry, there's no data for this month.")
                                  
                   
 
@@ -207,3 +207,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+
