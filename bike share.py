@@ -27,7 +27,7 @@ def get_filters():
     # TO DO: get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
   
     while True:
-        month = input("\nwhich month would you choose to sort? january, february, march, april, may, june or type 'all' ?\n").strip()
+        month = input("\nwhich month would you choose to sort? january, february, march, april, may, june or type 'all' ?\n").strip().lower()
         if month not in ('january', 'february', 'march', 'april', 'may', 'june', 'all'):
             print("sorry, please choose the correct month name. try again.")
             continue
@@ -37,7 +37,7 @@ def get_filters():
     # TO DO: get user input for month (all, january, february, ... , june)
 
     while True:
-            day = input("\nwhat day's would you choose to sort?: saturday, sunday, monday, tuesday, wednesday, thursday, friday, or 'all'.\n").strip()
+            day = input("\nwhat day's would you choose to sort?: saturday, sunday, monday, tuesday, wednesday, thursday, friday, or 'all'.\n").strip().lower()
             if day not in ('saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'all'):
                 print("sorry, please choose the correct day's name.")
                 continue
@@ -66,7 +66,8 @@ def load_data(city, month, day):
     df = pd.read_csv(CITY_DATA[city])
     df['start time'] = pd.to_datetime(df['start time'])
     df['month'] = df['start time'].dt.month
-    df['dayofweek'] = df['start time'].dt.weekday_name
+    df['day of week'] = df['start time'].dt.weekday_name
+    df['hour'] = df['start time'].dt.hour
     if month != 'all':
                months = ['january', 'february', 'march', 'april', 'may', 'june']
                month = months.index(month) + 1
@@ -121,8 +122,9 @@ def station_stats(df):
 
     # TO DO: display most frequent combination of start station and end station trip
 
-    frequentstation = df.groupby(['start station', 'end station']).count()
-    print('\nmost frequent combination of start station and end station trip:', startstation, "and", endstation)
+    frequentstation = df.groupby(['start station', 'end station'])
+    mostfrequentstation = frequentstation.size().sort_value(ascending=False).head(1)
+    print('\nmost frequent combination of start station and end station trip:', mostfrequentstation)
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -136,9 +138,10 @@ def trip_duration_stats(df):
 
     # TO DO: display total travel time
     
-    totaltime = 60*60*24
-    totaltraveltime = df['trip duration'].mean()
-    print('mean travel time:', totaltraveltime / totaltime, "minutes")
+    totaltraveltime = df['trip duration'].sum()
+    print('total travel time:', totaltraveltime, "minutes")
+    meantraveltime = df['trip duration'].mean
+    print('mean travel time is: ', meantraveltime, "minutes")
     
 
     # TO DO: display mean travel time
@@ -165,7 +168,7 @@ def user_stats(df):
         print('\ngender types:\n', gendertypes)
     except KeyError:
         print("\ngender types:\nsorry, there's no data for this month.")
-            
+
 
     # TO DO: Display earliest, most recent, and most common year of birth
     try:
@@ -179,12 +182,23 @@ def user_stats(df):
     except KeyError:
         print("\nmost recent year:\nsorry, ther's no data for this month.")
     try:
-        mostcommonyear = df["birth year"].value_counts().idxmax()
+        mostcommonyear = df["birth year"].mode(0)
         print('\nmost common year:', mostcommonyear)
     except KeyError:
         print("\nmost common year:\nsorry, there's no data for this month.")
                                  
-                  
+def showerowdata(df):
+    row=0
+    while True:
+        viewrowdata = input("do you like to see the raw data? 'yes' or 'no'.").lower
+        if viewrowdata == "yes":
+            print(df.iloc[row : row + 6])
+            row += 6
+        elif viewrowdata == "no":
+            break
+        else:
+            print ("sorry, 'yes' or 'no'")                
+                            
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -199,6 +213,7 @@ def main():
         station_stats(df)
         trip_duration_stats(df)
         user_stats(df)
+        showerowdata(df)           
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
@@ -207,4 +222,3 @@ def main():
 
 if __name__ == "__main__":
 	main()
-
